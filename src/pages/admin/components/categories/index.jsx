@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Button, Row, Col, Table } from 'react-bootstrap';
-import { getCategories, addCategory, removeCategory } from './actions';
+import { Form, Button, Row, Col, Table, Alert } from 'react-bootstrap';
+import { getCategories, addCategory, removeCategory, error } from './actions';
+
 
 export default function Categories() {
   const [categories, setCategories] = useState([]);
+  const [alertType] = useState(['danger'])
   const [name, setName] = useState('');
+  const [textAlert, setTextAlert] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
     loadCategories();
@@ -16,16 +20,28 @@ export default function Categories() {
     setName('');
   }
 
+  async function setAlert(text) {
+    setTextAlert(text)
+    setShowAlert(true)
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    })
+  }
+
   async function save() {
     if (name.trim() === '') {
-      alert('Categoria inválida!');
+      setAlert('Categoria inválida!')
       return;
     }
     await addCategory(name, loadCategories);
   }
 
   async function remove(id) {
-    await removeCategory(id, loadCategories);
+    let hasRemovedCategory = await removeCategory(id, loadCategories)
+    if (!hasRemovedCategory) {
+      setAlert('Não foi possivel remover a categoria pois ela esta vinculada a uma palavra')
+    }
   }
 
   return (
@@ -40,6 +56,14 @@ export default function Categories() {
           </Col>
         </Row>
       </Form>
+      {
+
+        alertType.map((variant, idx) => (
+          <Alert key={idx} variant={variant} onClose={() => setShowAlert(false)} dismissible show={showAlert}>
+            {textAlert}
+          </Alert>
+        ))
+      }
       <Table striped bordered hover size="sm">
         <thead>
           <tr>
@@ -52,10 +76,10 @@ export default function Categories() {
           {
             categories.map((categorie, index) => (
               <tr key={index}>
-                <td style={{width: '20%'}}>{categorie.id}</td>
+                <td style={{ width: '20%' }}>{categorie.id}</td>
                 <td>{categorie.name}</td>
-                <td style={{width: '20%'}}><Button variant="danger" size='sm' onClick={() => remove(categorie.id)}>Remover</Button></td>
-              </tr> 
+                <td style={{ width: '20%' }}><Button variant="danger" size='sm' onClick={() => remove(categorie.id)}>Remover</Button></td>
+              </tr>
             ))
           }
         </tbody>

@@ -29,11 +29,12 @@ export async function addCategory(name, callback) {
 
 export async function removeCategory(id, callback) {
   if (await hasCategoryInWord(id)) {
-    return;
+    return false;
   }
   const db = firebase.firestore();
   await db.collection('categories').doc(id).delete();
   callback();
+  return true;
 }
 
 export async function updateCategory(id, name, callback) {
