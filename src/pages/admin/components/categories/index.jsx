@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Button, Row, Col, Table, Alert } from 'react-bootstrap';
-import { getCategories, addCategory, removeCategory, error } from './actions';
+import { getCategories, addCategory, removeCategory } from './actions';
 
 
 export default function Categories() {
@@ -57,7 +57,6 @@ export default function Categories() {
         </Row>
       </Form>
       {
-
         alertType.map((variant, idx) => (
           <Alert key={idx} variant={variant} onClose={() => setShowAlert(false)} dismissible show={showAlert}>
             {textAlert}

@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 
 import Admin from './pages/admin';
+import Home from './pages/home';
 
 function App() {
   return (
@@ -26,10 +27,6 @@ function App() {
       </Router>
     </div>
   );
-}
-
-function Home() {
-  return <h2>Home</h2>;
 }
 
 export default App;

@@ -51,7 +51,7 @@ export async function hasCategoryInWord(idCategory) {
   let hasCategoryInWord = false
   const wordArray = await getWords();
   const categoryArray = await getCategories();
-  const categorySelected = categoryArray.filter(category => { if (category.id == idCategory) return category });
-  wordArray.map(word => { if (word.category.name == categorySelected[0].name) hasCategoryInWord = true })
+  const categorySelected = categoryArray.filter(category => { if (category.id === idCategory) return category });
+  wordArray.map(word => { if (word.category.name === categorySelected[0].name) hasCategoryInWord = true })
   return hasCategoryInWord;
 }
