@@ -16,6 +16,7 @@ export default function Home() {
   const [showAlert, setShowAlert] = useState(false);
   const [isFirstTime, setIsFirstTime] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [redirect, setRedirect] = useState('')
 
   useEffect(() => {
     async function loadCategories() {
@@ -62,9 +63,9 @@ export default function Home() {
     if (isFirstTime) {
       const player = await addPlayer(playerName);
       localStorage.setItem('player', player.id);
+      return window.location.reload();
     }
-
-    window.location.reload();
+    setRedirect("/game")
   }
 
   return (
@@ -82,9 +83,9 @@ export default function Home() {
               <Form className='mt-3 mb-3'>
                 {
                   isFirstTime ?
-                  <Form.Control value={playerName} onChange={(e) => setPlayerName(e.target.value)} placeholder="Nome do jogador" />
-                  :
-                <h4>Bem vindo de volta, {playerName}</h4>
+                    <Form.Control value={playerName} onChange={(e) => setPlayerName(e.target.value)} placeholder="Nome do jogador" />
+                    :
+                    <h4>Bem vindo de volta, {playerName}</h4>
                 }
               </Form>
             </Col>
@@ -119,7 +120,7 @@ export default function Home() {
                 <span className="sr-only">Loading...</span>
               </Spinner>
               :
-              <Button onClick={newGame}>Jogar</Button>
+              <Button onClick={newGame} href={redirect}>Jogar</Button>
           }
         </Col>
       </Row>
