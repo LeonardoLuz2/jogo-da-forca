@@ -9,6 +9,7 @@ import {
 
 import Admin from './pages/admin';
 import Home from './pages/home';
+import Game from './pages/game';
 
 function App() {
   return (
@@ -21,6 +22,9 @@ function App() {
             </Route>
             <Route path="/">
               <Home />
+            </Route>
+            <Route path="/game">
+              <Game />
             </Route>
           </Switch>
         </div>
