@@ -9,7 +9,9 @@ import img0 from "./images/img0.png";
 // import img5 from "./components/images/5.jpg";
 // import img6 from "./components/images/6.jpg";
 
-class Game extends Component {
+
+
+class Hangman extends Component {
     /** by default, allow 6 guesses and use provided gallows images. */
     static defaultProps = {
         maxWrong: 6,
@@ -76,22 +78,23 @@ class Game extends Component {
         if (isWinner) gameState = "Você Venceu!!!";
         if (gameOver) gameState = "Não foi dessa vez... :(";
         return (
+            /*Descomentar o html quando as funcionalidades forem pra sprint*/
             <section className="game">
 
-            <div className="Hangman">
-                <img src={this.props.images[this.state.nWrong]} alt={altText} />
-                <p className="Hangman-wrong">Palpites Errados: {this.state.nWrong}</p>
-                <p className="Hangman-word">
-                    {!gameOver ? this.guessedWord() : this.state.answer}
-                </p>
-                <p className="Hangman-btns">{gameState}</p>
-                <button className="Hangman-reset" onClick={this.reset}>
-                    Recomeçar
-        </button>
-            </div>
+                <div className="Hangman">
+                    <img src={this.props.images[this.state.nWrong]} alt={altText} />
+                    {/* <p className="Hangman-wrong">Palpites Errados: {this.state.nWrong}</p> */}
+                    <p className="Hangman-word">
+                        {/* {!gameOver ? this.guessedWord() : this.state.answer} */}
+                    </p>
+                    <p className="Hangman-btns">{gameState}</p>
+                    {/* <button className="Hangman-reset" onClick={this.reset}>
+                        Recomeçar
+                     </button> */}
+                </div>
             </section>
         );
     }
 }
+export default Hangman;
 
-export default Game;
