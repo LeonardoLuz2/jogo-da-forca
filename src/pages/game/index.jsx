@@ -83,14 +83,14 @@ class Hangman extends Component {
 
                 <div className="Hangman">
                     <img src={this.props.images[this.state.nWrong]} alt={altText} />
-                    {/* <p className="Hangman-wrong">Palpites Errados: {this.state.nWrong}</p> */}
+                    <p className="Hangman-wrong">Erros: {this.state.nWrong}</p>
                     <p className="Hangman-word">
-                        {/* {!gameOver ? this.guessedWord() : this.state.answer} */}
+                        {!gameOver ? this.guessedWord() : this.state.answer}
                     </p>
                     <p className="Hangman-btns">{gameState}</p>
-                    {/* <button className="Hangman-reset" onClick={this.reset}>
+                    {/* {<button className="Hangman-reset" onClick={this.reset}>
                         Recomeçar
-                     </button> */}
+                     </button>} */}
                 </div>
             </section>
         );
