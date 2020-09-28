@@ -2,12 +2,12 @@ import React, { Component } from "react";
 import "./game.css";
 // import { randomWord } from "./words";
 import img0 from "./images/img0.png";
-// import img1 from "./components/images/1.jpg";
-// import img2 from "./components/images/2.jpg";
-// import img3 from "./components/images/3.jpg";
-// import img4 from "./components/images/4.jpg";
-// import img5 from "./components/images/5.jpg";
-// import img6 from "./components/images/6.jpg";
+import img1 from "./images/img1.png";
+import img2 from "./images/img2.png";
+import img3 from "./images/img3.png";
+import img4 from "./images/img4.png";
+import img5 from "./images/img5.png";
+import img6 from "./images/img6.png";
 
 
 
@@ -15,7 +15,7 @@ class Hangman extends Component {
     /** by default, allow 6 guesses and use provided gallows images. */
     static defaultProps = {
         maxWrong: 6,
-        images: [img0/*, img1, img2, img3, img4, img5, img6*/]
+        images: [img0, img1, img2, img3, img4, img5, img6]
     };
 
     constructor(props) {

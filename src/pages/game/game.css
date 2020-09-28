@@ -1,15 +1,17 @@
-  .game {
+.game {
     box-sizing: border-box;
     text-align: center;
-    padding: 2rem 0;
+    padding: 3rem 0;
     display: flex;
     align-items: center;
     justify-content: center;
     /* background: url("https://cdn.pixabay.com/photo/2017/07/13/16/16/paper-2500942_960_720.jpg");  */
+    /* background-image: url('images/medieval_castle.jpg'); */
     background-position: bottom center;
-    background-size: cover;
+    /* background-size: cover; */
+    background-size: 100% 100%;
   }
-  
+ 
 .Hangman {
     width: 580px;
     color: black;
