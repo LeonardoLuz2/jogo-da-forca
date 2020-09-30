@@ -8,6 +8,7 @@ import img3 from "./images/img3.png";
 import img4 from "./images/img4.png";
 import img5 from "./images/img5.png";
 import img6 from "./images/img6.png";
+import img7 from "./images/plateia.png"
 
 
 
@@ -15,7 +16,7 @@ class Hangman extends Component {
     /** by default, allow 6 guesses and use provided gallows images. */
     static defaultProps = {
         maxWrong: 6,
-        images: [img0, img1, img2, img3, img4, img5, img6]
+        images: [img0, img1, img2, img3, img4, img5, img6, img7]
     };
 
     constructor(props) {
@@ -90,8 +91,9 @@ class Hangman extends Component {
                     <p className="Hangman-btns">{gameState}</p>
                     {/* {<button className="Hangman-reset" onClick={this.reset}>
                         Recomeçar
-                     </button>} */}
+                    </button>} */}
                 </div>
+                    <img src={this.props.images[7]} className="plateia" alt="plateia" />
             </section>
         );
     }
