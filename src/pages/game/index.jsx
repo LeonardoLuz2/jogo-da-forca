@@ -1,6 +1,8 @@
 import React, { Component } from "react";
+import { getWordsByCategory } from "../admin/components/words/actions";
 import "./game.css";
 // import { randomWord } from "./words";
+
 import img0 from "./images/img0.png";
 import img1 from "./images/img1.png";
 import img2 from "./images/img2.png";
@@ -19,27 +21,66 @@ class Hangman extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { nWrong: 0, seconds: 60, guessed: new Set(), answer: "controle"/*randomWord()*/ };
+        this.state = { nWrong: 0, seconds: 60, guessed: new Set(), answer: "", loading: true };
         this.handleGuess = this.handleGuess.bind(this);
         this.reset = this.reset.bind(this);
     }
 
-    componentDidMount() {
-        this.timer();
+    async componentDidMount() {
+        try {
+            await this.reset();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async randomWord() {
+        const categories = JSON.parse(localStorage.getItem("gameCategories"));
+
+        if (categories) {
+            const randomCategory = Math.floor(Math.random() * categories.length);
+            const words = await getWordsByCategory(categories[randomCategory].value);
+            const randomWord = Math.floor(Math.random() * words.length);
+            return words[randomWord].name;
+        }
+
+        return "";
     }
 
     componentWillUnmount() {
         clearInterval(this.hangmanTimer);
     }
 
-    reset() {
+    async componentDidUpdate() {
+        const gameOver = (this.state.nWrong >= this.props.maxWrong) || this.state.seconds <= 0;
+        const isWinner = this.guessedWord().join("") === this.state.answer;
+
+        if (gameOver || isWinner) {
+            clearInterval(this.hangmanTimer);
+        }
+
+        if (this.guessedWord().join("") === this.state.answer) {
+            await this.addScore();
+        }
+    }
+
+    async reset() {
+        this.setState({
+            loading: true
+        });
+        const word = await this.randomWord();
         this.setState({
             nWrong: 0,
             seconds: 60,
             guessed: new Set(),
-            answer: "controle"/*randomWord()*/
+            answer: word.toLowerCase(),
+            loading: false
         });
         this.timer();
+    }
+
+    async addScore() {
+        console.log('oi')
     }
 
     timer() {
@@ -47,7 +88,7 @@ class Hangman extends Component {
         this.hangmanTimer = setInterval(() => {
             if (this.state.seconds <= 0) {
                 clearInterval(this.hangmanTimer);
-            } else {                
+            } else {
                 this.setState(({ seconds }) => ({
                     seconds: seconds - 1
                 }))
@@ -97,23 +138,30 @@ class Hangman extends Component {
         const altText = `${this.state.nWrong}/${this.props.maxWrong} palpites`;
         const isWinner = this.guessedWord().join("") === this.state.answer;
         let gameState = this.generateButtons();
-        if (isWinner) {
+        const loading = this.state.loading;
+        if (isWinner && !loading) {
             gameState = "Você Venceu!!!";
-            clearInterval(this.hangmanTimer);
         }
         if (gameOver) gameState = "Não foi dessa vez... :(";
         return (
             /*Descomentar o html quando as funcionalidades forem pra sprint*/
             <section className="game">
-
                 <div className="Hangman">
                     <img src={this.props.images[this.state.nWrong]} alt={altText} />
                     <p className="Hangman-wrong">Erros: {this.state.nWrong}</p>
                     <p className="Hangman-timer">Tempo: {this.state.seconds}</p>
                     <p className="Hangman-word">
-                        {!gameOver ? this.guessedWord() : this.state.answer}
+                        {
+                            this.state.loading ?
+                                "Carregando..."
+                                :
+                                !gameOver ? this.guessedWord() : this.state.answer
+                        }
                     </p>
-                    <p className="Hangman-btns">{gameState}</p>
+                    {
+                        !this.state.loading &&
+                        <p className="Hangman-btns">{gameState}</p>
+                    }
                     {<button className="Hangman-reset" onClick={this.reset}>
                         Recomeçar
                     </button>}

@@ -66,7 +66,8 @@ export default function Home() {
       localStorage.setItem('player', player.id);
     }
 
-    history.push("/game");
+    localStorage.setItem('gameCategories', JSON.stringify(selected));
+    history.push(`/game`);
   }
 
   const ranking = () => {
