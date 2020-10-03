@@ -10,8 +10,6 @@ import img5 from "./images/img5.png";
 import img6 from "./images/img6.png";
 import img7 from "./images/plateia.png"
 
-
-
 class Hangman extends Component {
     /** by default, allow 6 guesses and use provided gallows images. */
     static defaultProps = {
@@ -21,17 +19,40 @@ class Hangman extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { nWrong: 0, guessed: new Set(), answer: "controle"/*randomWord()*/ };
+        this.state = { nWrong: 0, seconds: 60, guessed: new Set(), answer: "controle"/*randomWord()*/ };
         this.handleGuess = this.handleGuess.bind(this);
         this.reset = this.reset.bind(this);
+    }
+
+    componentDidMount() {
+        this.timer();
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.hangmanTimer);
     }
 
     reset() {
         this.setState({
             nWrong: 0,
+            seconds: 60,
             guessed: new Set(),
             answer: "controle"/*randomWord()*/
         });
+        this.timer();
+    }
+
+    timer() {
+        clearInterval(this.hangmanTimer);
+        this.hangmanTimer = setInterval(() => {
+            if (this.state.seconds <= 0) {
+                clearInterval(this.hangmanTimer);
+            } else {                
+                this.setState(({ seconds }) => ({
+                    seconds: seconds - 1
+                }))
+            }
+        }, 1000);
     }
 
     /** guessedWord: show current-state of word:
@@ -72,11 +93,14 @@ class Hangman extends Component {
 
     /** render: render game */
     render() {
-        const gameOver = this.state.nWrong >= this.props.maxWrong;
+        const gameOver = (this.state.nWrong >= this.props.maxWrong) || this.state.seconds <= 0;
         const altText = `${this.state.nWrong}/${this.props.maxWrong} palpites`;
         const isWinner = this.guessedWord().join("") === this.state.answer;
         let gameState = this.generateButtons();
-        if (isWinner) gameState = "Você Venceu!!!";
+        if (isWinner) {
+            gameState = "Você Venceu!!!";
+            clearInterval(this.hangmanTimer);
+        }
         if (gameOver) gameState = "Não foi dessa vez... :(";
         return (
             /*Descomentar o html quando as funcionalidades forem pra sprint*/
@@ -85,15 +109,16 @@ class Hangman extends Component {
                 <div className="Hangman">
                     <img src={this.props.images[this.state.nWrong]} alt={altText} />
                     <p className="Hangman-wrong">Erros: {this.state.nWrong}</p>
+                    <p className="Hangman-timer">Tempo: {this.state.seconds}</p>
                     <p className="Hangman-word">
                         {!gameOver ? this.guessedWord() : this.state.answer}
                     </p>
                     <p className="Hangman-btns">{gameState}</p>
-                    {/* {<button className="Hangman-reset" onClick={this.reset}>
+                    {<button className="Hangman-reset" onClick={this.reset}>
                         Recomeçar
-                    </button>} */}
+                    </button>}
                 </div>
-                    <img src={this.props.images[7]} className="plateia" alt="plateia" />
+                <img src={this.props.images[7]} className="plateia" alt="plateia" />
             </section>
         );
     }
