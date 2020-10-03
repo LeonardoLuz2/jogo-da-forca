@@ -10,6 +10,7 @@ import {
 import Admin from './pages/admin';
 import Home from './pages/home';
 import Game from './pages/game';
+import Ranking from './pages/ranking';
 
 function App() {
   return (
@@ -22,6 +23,9 @@ function App() {
             </Route>
             <Route path="/game">
               <Game />
+            </Route>
+            <Route path="/ranking">
+              <Ranking />
             </Route>
             <Route path="/">
               <Home />

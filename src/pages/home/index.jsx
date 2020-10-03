@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Col, Row, Container, Button, Form, Alert, Spinner } from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { addPlayer, getPlayer } from '../../actions/player';
@@ -9,6 +10,7 @@ const animatedComponents = makeAnimated();
 
 export default function Home() {
 
+  let history = useHistory();
   const [selected, setSelected] = useState([]);
   const [categories, setCategories] = useState([]);
   const [playerName, setPlayerName] = useState('');
@@ -16,7 +18,6 @@ export default function Home() {
   const [showAlert, setShowAlert] = useState(false);
   const [isFirstTime, setIsFirstTime] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [redirect, setRedirect] = useState('')
 
   useEffect(() => {
     async function loadCategories() {
@@ -63,9 +64,13 @@ export default function Home() {
     if (isFirstTime) {
       const player = await addPlayer(playerName);
       localStorage.setItem('player', player.id);
-      return window.location.reload();
     }
-    setRedirect("/game")
+
+    history.push("/game");
+  }
+
+  const ranking = () => {
+    history.push('/ranking');
   }
 
   return (
@@ -120,8 +125,13 @@ export default function Home() {
                 <span className="sr-only">Loading...</span>
               </Spinner>
               :
-              <Button onClick={newGame} href={redirect}>Jogar</Button>
+              <Button onClick={newGame}>Jogar</Button>
           }
+        </Col>
+      </Row>
+      <Row className="justify-content-md-center mt-3">
+        <Col xs lg="6">
+          <Button className="btn btn-warning" onClick={ranking}>Visualizar ranking</Button>
         </Col>
       </Row>
     </Container>
