@@ -26,3 +26,25 @@ export async function getRanking() {
     return { id: doc.id, ...doc.data() }
   })
 }
+
+export async function addPlayerScore(playerId, score) {
+  const db = firebase.firestore();
+  const player = db.collection('players').doc(playerId);
+
+  const currentScore = await (await player.get()).data().score;
+
+  player.update({
+    score: currentScore + score
+  });
+}
+
+export async function addPlayerCredits(playerId, credits) {
+  const db = firebase.firestore();
+  const player = db.collection('players').doc(playerId);
+
+  const currentCredits = await (await player.get()).data().credits;
+
+  player.update({
+    credits: currentCredits + credits
+  });
+}

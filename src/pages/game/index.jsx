@@ -1,7 +1,7 @@
 import React, { Component } from "react";
+import { getPlayer, addPlayerScore, addPlayerCredits } from "../../actions/player";
 import { getWordsByCategory } from "../admin/components/words/actions";
 import "./game.css";
-// import { randomWord } from "./words";
 
 import img0 from "./images/img0.png";
 import img1 from "./images/img1.png";
@@ -21,7 +21,7 @@ class Hangman extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { nWrong: 0, seconds: 60, guessed: new Set(), answer: "", loading: true };
+        this.state = { nWrong: 0, seconds: 60, guessed: new Set(), answer: "", loading: true, playerScore: 0, playerCredits: 0, scoreToAdd: 100 };
         this.handleGuess = this.handleGuess.bind(this);
         this.reset = this.reset.bind(this);
     }
@@ -35,16 +35,28 @@ class Hangman extends Component {
     }
 
     async randomWord() {
-        const categories = JSON.parse(localStorage.getItem("gameCategories"));
+        try {
+            const categories = JSON.parse(localStorage.getItem("gameCategories"));
 
-        if (categories) {
-            const randomCategory = Math.floor(Math.random() * categories.length);
-            const words = await getWordsByCategory(categories[randomCategory].value);
-            const randomWord = Math.floor(Math.random() * words.length);
-            return words[randomWord].name;
+            if (categories) {
+                const randomCategory = Math.floor(Math.random() * categories.length);
+                const words = await getWordsByCategory(categories[randomCategory].value);
+                if (words.length === 0) {
+                    alert("Nenhuma palavra encontrada para a(s) categoria(s)");
+                    window.location.href = '/';
+                    return "";
+                }
+                const randomWord = Math.floor(Math.random() * words.length);
+                return words[randomWord].name;
+            } else {
+                alert("Nenhuma palavra encontrada para a(s) categoria(s)");
+                window.location.href = '/';
+            }
+
+            return "";
+        } catch (error) {
+            return "";
         }
-
-        return "";
     }
 
     componentWillUnmount() {
@@ -58,29 +70,45 @@ class Hangman extends Component {
         if (gameOver || isWinner) {
             clearInterval(this.hangmanTimer);
         }
-
-        if (this.guessedWord().join("") === this.state.answer) {
-            await this.addScore();
-        }
     }
 
     async reset() {
         this.setState({
             loading: true
         });
+        await this.loadPlayerInfo();
         const word = await this.randomWord();
+
+        if (word === "") {
+            return;
+        }
+
         this.setState({
             nWrong: 0,
             seconds: 60,
             guessed: new Set(),
             answer: word.toLowerCase(),
-            loading: false
+            loading: false,
+            scoreToAdd: 100,
         });
         this.timer();
     }
 
+    async loadPlayerInfo() {
+        const playerId = localStorage.getItem('player');
+        if (playerId) {
+            const player = await getPlayer(playerId);
+            this.setState({
+                playerScore: player.score,
+                playerCredits: player.credits,
+            });
+        }
+    }
+
     async addScore() {
-        console.log('oi')
+        const playerId = localStorage.getItem('player');
+        await addPlayerScore(playerId, this.state.scoreToAdd);
+        await addPlayerCredits(playerId, 100);
     }
 
     timer() {
@@ -109,12 +137,30 @@ class Hangman extends Component {
       - add to guessed letters
       - if not in answer, increase number-wrong guesses
     */
-    handleGuess(evt) {
+    async handleGuess(evt) {
         let ltr = evt.target.value;
         this.setState(st => ({
             guessed: st.guessed.add(ltr),
             nWrong: st.nWrong + (st.answer.includes(ltr) ? 0 : 1)
         }));
+
+        await this.validateWin(ltr);
+    }
+
+    async validateWin(ltr) {
+        let guessed = this.state.guessed;
+        guessed.add(ltr);
+
+        let guessedResult = this.state.answer
+            .split("")
+            .map(ltr => (guessed.has(ltr) ? ltr : "_"));
+
+        if (guessedResult.join("") === this.state.answer) {
+            await this.addScore();
+            setTimeout(async () => {
+                await this.loadPlayerInfo();
+            }, 500);
+        }
     }
 
     /** generateButtons: return array of letter buttons to render */
@@ -150,6 +196,8 @@ class Hangman extends Component {
                     <img src={this.props.images[this.state.nWrong]} alt={altText} />
                     <p className="Hangman-wrong">Erros: {this.state.nWrong}</p>
                     <p className="Hangman-timer">Tempo: {this.state.seconds}</p>
+                    <p className="Player-score">Pontos: {this.state.playerScore}</p>
+                    <p className="Player-credits">Créditos: {this.state.playerCredits}</p>
                     <p className="Hangman-word">
                         {
                             this.state.loading ?

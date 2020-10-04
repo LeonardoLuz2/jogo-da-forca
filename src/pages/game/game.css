@@ -56,6 +56,20 @@
     position: absolute;
     left: 90%;
   }
+  .Player-credits {
+    font-size: 1.2rem;
+    letter-spacing: 0.1rem;
+    bottom: 40%;
+    position: absolute;
+    left: 90%;
+  }
+  .Player-score {
+    font-size: 1.2rem;
+    letter-spacing: 0.1rem;
+    bottom: 45%;
+    position: absolute;
+    left: 90%;
+  }
   .Hangman-timer {
     font-size: 1.2rem;
     letter-spacing: 0.1rem;
