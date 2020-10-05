@@ -89,11 +89,11 @@ class Hangman extends Component {
                         {!gameOver ? this.guessedWord() : this.state.answer}
                     </p>
                     <p className="Hangman-btns">{gameState}</p>
-                    {/* {<button className="Hangman-reset" onClick={this.reset}>
+                    {<button className="Hangman-reset" onClick={this.reset}>
                         Recomeçar
-                    </button>} */}
+                    </button>}
                 </div>
-                    <img src={this.props.images[7]} className="plateia" alt="plateia" />
+                <img src={this.props.images[7]} className="plateia" alt="plateia" />
             </section>
         );
     }
