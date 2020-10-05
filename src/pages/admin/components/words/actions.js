@@ -9,6 +9,15 @@ export async function getWords() {
   })
 }
 
+export async function getWordsByCategory(categoryId) {
+  const db = firebase.firestore();
+  const words = await db.collection('words').where("category.id", "==", categoryId).get();
+
+  return words.docs.map(doc => {
+    return { id: doc.id, ...doc.data() }
+  })
+}
+
 export async function addWord(name, categoryId, callback) {
   const db = firebase.firestore();
 
