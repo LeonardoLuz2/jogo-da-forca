@@ -130,7 +130,7 @@ class Hangman extends Component {
     guessedWord() {
         return this.state.answer
             .split("")
-            .map(ltr => (this.state.guessed.has(ltr) ? ltr : "_"));
+            .map(ltr => (this.state.guessed.has(ltr) ? ltr : (ltr == " ") ? " " : "_"));
     }
 
     /** handleGuest: handle a guessed letter:
@@ -138,11 +138,21 @@ class Hangman extends Component {
       - if not in answer, increase number-wrong guesses
     */
     async handleGuess(evt) {
+
+
         let ltr = evt.target.value;
         this.setState(st => ({
             guessed: st.guessed.add(ltr),
             nWrong: st.nWrong + (st.answer.includes(ltr) ? 0 : 1)
-        }));
+        }), () => {
+            const gameOver = (this.state.nWrong >= this.props.maxWrong) || this.state.seconds <= 0;
+            const countOccurrences = (arr, val) => arr.reduce((a, v) => (v === val ? a + 1 : a), 0);
+            let points = ((this.guessedWord().length - countOccurrences(this.guessedWord(), '_')) * 10)
+            if (gameOver) {
+                addPlayerScore(localStorage.getItem('player'), points);
+                points = 0;
+            }
+        });
 
         await this.validateWin(ltr);
     }
@@ -154,7 +164,6 @@ class Hangman extends Component {
         let guessedResult = this.state.answer
             .split("")
             .map(ltr => (guessed.has(ltr) ? ltr : "_"));
-
         if (guessedResult.join("") === this.state.answer) {
             await this.addScore();
             setTimeout(async () => {
@@ -178,21 +187,14 @@ class Hangman extends Component {
         ));
     }
 
-    // async addPointsAfterGameOver(wordsLeft) {
-    //     // console.log("wordsLeft ", wordsLeft)
-    //     // console.log("points ", points)
-    // }
-
     /** render: render game */
     state = { redirect: null };
     render() {
         const gameOver = (this.state.nWrong >= this.props.maxWrong) || this.state.seconds <= 0;
         const altText = `${this.state.nWrong}/${this.props.maxWrong} palpites`;
         const isWinner = this.guessedWord().join("") === this.state.answer;
-        const countOccurrences = (arr, val) => arr.reduce((a, v) => (v === val ? a + 1 : a), 0);
         let gameState = this.generateButtons();
         const loading = this.state.loading;
-        const points = ((this.guessedWord().length - countOccurrences(this.guessedWord(), '_')) * 10)
         if (this.state.redirect) {
             return <Redirect to={this.state.redirect} />
         }
@@ -200,7 +202,6 @@ class Hangman extends Component {
             gameState = "Você Venceu!!!";
         } else
             if (gameOver) {
-                addPlayerScore(localStorage.getItem('player'), points);
 
                 gameState = "Não foi dessa vez... :(";
             }
