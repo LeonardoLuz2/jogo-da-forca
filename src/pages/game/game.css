@@ -140,3 +140,36 @@
     top: 53%;
     height: 45%;
   }
+
+  .game-back {
+    display: block;
+    font-family: inherit;
+    width: 100%;
+    background-color: #0E4BEF;
+    box-shadow: 0 4px #000080;
+    font-size: 1.2rem;
+    letter-spacing: 0.2rem;
+    outline: none;
+    border: none;
+    color: #fff;
+    border-radius: 5px;
+    padding: 0.4rem 2rem;
+    margin-top: 1rem;
+    transition: all 0.2s ease;
+    position: absolute;
+    width: 200px;
+    right: 86%;
+    top: 1%;
+  }
+  
+  .game-back:hover {
+    cursor: pointer;
+    transform: translateY(-2px);
+    box-shadow: 0 6px #000080;
+    background-color: #000080;
+  }
+  
+  .game-back:active {
+    transform: translateY(0);
+    box-shadow: 0 4px #000080;
+  }

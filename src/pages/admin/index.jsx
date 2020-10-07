@@ -1,6 +1,5 @@
 import React from 'react';
-import { Tab, Tabs, Container } from 'react-bootstrap';
-
+import { Tab, Tabs, Container, Button } from 'react-bootstrap';
 import Categories from './components/categories';
 import Words from './components/words';
 

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { getPlayer, addPlayerScore, addPlayerCredits } from "../../actions/player";
 import { getWordsByCategory } from "../admin/components/words/actions";
 import "./game.css";
-
+import { Redirect } from "react-router-dom";
 import img0 from "./images/img0.png";
 import img1 from "./images/img1.png";
 import img2 from "./images/img2.png";
@@ -178,19 +178,37 @@ class Hangman extends Component {
         ));
     }
 
+    // async addPointsAfterGameOver(wordsLeft) {
+    //     // console.log("wordsLeft ", wordsLeft)
+    //     // console.log("points ", points)
+    // }
+
     /** render: render game */
+    state = { redirect: null };
     render() {
         const gameOver = (this.state.nWrong >= this.props.maxWrong) || this.state.seconds <= 0;
         const altText = `${this.state.nWrong}/${this.props.maxWrong} palpites`;
         const isWinner = this.guessedWord().join("") === this.state.answer;
+        const countOccurrences = (arr, val) => arr.reduce((a, v) => (v === val ? a + 1 : a), 0);
         let gameState = this.generateButtons();
         const loading = this.state.loading;
+        const points = ((this.guessedWord().length - countOccurrences(this.guessedWord(), '_')) * 10)
+        if (this.state.redirect) {
+            return <Redirect to={this.state.redirect} />
+        }
         if (isWinner && !loading) {
             gameState = "Você Venceu!!!";
-        }
-        if (gameOver) gameState = "Não foi dessa vez... :(";
+        } else
+            if (gameOver) {
+                addPlayerScore(localStorage.getItem('player'), points);
+
+                gameState = "Não foi dessa vez... :(";
+            }
         return (
             <section className="game">
+                {<button className="game-back" onClick={() => this.setState({ redirect: "/" })}>
+                    Voltar
+                    </button>}
                 <div className="Hangman">
                     <img src={this.props.images[this.state.nWrong]} alt={altText} />
                     <p className="Hangman-wrong">Erros: {this.state.nWrong}</p>
