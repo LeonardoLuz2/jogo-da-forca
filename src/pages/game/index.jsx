@@ -12,6 +12,8 @@ import img5 from "./images/img5.png";
 import img6 from "./images/img6.png";
 import img7 from "./images/plateia.png"
 
+const time = 15;
+
 class Hangman extends Component {
     /** by default, allow 6 guesses and use provided gallows images. */
     static defaultProps = {
@@ -21,7 +23,7 @@ class Hangman extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { nWrong: 0, seconds: 60, guessed: new Set(), answer: "", loading: true, playerScore: 0, playerCredits: 0, scoreToAdd: 100 };
+        this.state = { nWrong: 0, seconds: time, guessed: new Set(), answer: "", loading: true, playerScore: 0, playerCredits: 0, scoreToAdd: 100 };
         this.handleGuess = this.handleGuess.bind(this);
         this.reset = this.reset.bind(this);
     }
@@ -64,7 +66,7 @@ class Hangman extends Component {
     }
 
     async componentDidUpdate() {
-        const gameOver = (this.state.nWrong >= this.props.maxWrong) || this.state.seconds <= 0;
+        const gameOver = (this.state.nWrong >= this.props.maxWrong);
         const isWinner = this.guessedWord().join("") === this.state.answer;
 
         if (gameOver || isWinner) {
@@ -85,7 +87,7 @@ class Hangman extends Component {
 
         this.setState({
             nWrong: 0,
-            seconds: 60,
+            seconds: time,
             guessed: new Set(),
             answer: word.toLowerCase(),
             loading: false,
@@ -116,6 +118,7 @@ class Hangman extends Component {
         this.hangmanTimer = setInterval(() => {
             if (this.state.seconds <= 0) {
                 clearInterval(this.hangmanTimer);
+                this.gameOverPoints();
             } else {
                 this.setState(({ seconds }) => ({
                     seconds: seconds - 1
@@ -145,16 +148,23 @@ class Hangman extends Component {
             guessed: st.guessed.add(ltr),
             nWrong: st.nWrong + (st.answer.includes(ltr) ? 0 : 1)
         }), () => {
-            const gameOver = (this.state.nWrong >= this.props.maxWrong) || this.state.seconds <= 0;
-            const countOccurrences = (arr, val) => arr.reduce((a, v) => (v === val ? a + 1 : a), 0);
-            let points = ((this.guessedWord().length - countOccurrences(this.guessedWord(), '_')) * 10)
-            if (gameOver) {
-                addPlayerScore(localStorage.getItem('player'), points);
-                points = 0;
-            }
+            this.gameOverPoints();
         });
 
         await this.validateWin(ltr);
+    }
+
+    gameOverPoints() {
+        const gameOver = (this.state.nWrong >= this.props.maxWrong) || this.state.seconds <= 0;
+        const countOccurrences = (arr, val) => arr.reduce((a, v) => (v === val || v === " " ? a + 1 : a), 0);
+        let points = ((this.guessedWord().length - countOccurrences(this.guessedWord(), '_')) * 10)
+        if (gameOver) {
+            addPlayerScore(localStorage.getItem('player'), points);
+            setTimeout(async () => {
+                await this.loadPlayerInfo();
+            }, 500);
+            points = 0;
+        }
     }
 
     async validateWin(ltr) {
@@ -163,7 +173,7 @@ class Hangman extends Component {
 
         let guessedResult = this.state.answer
             .split("")
-            .map(ltr => (guessed.has(ltr) ? ltr : "_"));
+            .map(ltr => (this.state.guessed.has(ltr) ? ltr : (ltr == " ") ? " " : "_"));
         if (guessedResult.join("") === this.state.answer) {
             await this.addScore();
             setTimeout(async () => {
