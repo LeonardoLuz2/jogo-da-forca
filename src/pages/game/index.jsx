@@ -17,13 +17,12 @@ const time = 60;
 class Hangman extends Component {
     /** by default, allow 6 guesses and use provided gallows images. */
     static defaultProps = {
-        maxWrong: 6,
         images: [img0, img1, img2, img3, img4, img5, img6, img7]
     };
 
     constructor(props) {
         super(props);
-        this.state = { nWrong: 0, seconds: time, guessed: new Set(), answer: "", loading: true, playerScore: 0, playerCredits: 0, scoreToAdd: 100 };
+        this.state = { nWrong: 0, maxWrong: 6, seconds: time, guessed: new Set(), answer: "", loading: true, playerScore: 0, playerCredits: 0, scoreToAdd: 100 };
         this.handleGuess = this.handleGuess.bind(this);
         this.reset = this.reset.bind(this);
     }
@@ -66,7 +65,7 @@ class Hangman extends Component {
     }
 
     async componentDidUpdate() {
-        const gameOver = (this.state.nWrong >= this.props.maxWrong);
+        const gameOver = (this.state.nWrong >= this.state.maxWrong);
         const isWinner = this.guessedWord().join("") === this.state.answer;
 
         if (gameOver || isWinner) {
@@ -87,6 +86,7 @@ class Hangman extends Component {
 
         this.setState({
             nWrong: 0,
+            maxWrong: 6,
             seconds: time,
             guessed: new Set(),
             answer: word.toLowerCase(),
@@ -140,10 +140,8 @@ class Hangman extends Component {
       - add to guessed letters
       - if not in answer, increase number-wrong guesses
     */
-    async handleGuess(evt) {
-
-
-        let ltr = evt.target.value;
+    async handleGuess(ltr) {
+        //let ltr = evt.target.value;
         this.setState(st => ({
             guessed: st.guessed.add(ltr),
             nWrong: st.nWrong + (st.answer.includes(ltr) ? 0 : 1)
@@ -155,7 +153,7 @@ class Hangman extends Component {
     }
 
     gameOverPoints() {
-        const gameOver = (this.state.nWrong >= this.props.maxWrong) || this.state.seconds <= 0;
+        const gameOver = (this.state.nWrong >= this.state.maxWrong) || this.state.seconds <= 0;
         const countOccurrences = (arr, val) => arr.reduce((a, v) => (v === val || v === " " ? a + 1 : a), 0);
         let points = ((this.guessedWord().length - countOccurrences(this.guessedWord(), '_')) * 10)
         if (gameOver) {
@@ -189,7 +187,7 @@ class Hangman extends Component {
                 className="Hangman-btn"
                 key={ltr}
                 value={ltr}
-                onClick={this.handleGuess}
+                onClick={() => this.handleGuess(ltr)}
                 disabled={this.state.guessed.has(ltr)}
             >
                 {ltr}
@@ -197,11 +195,50 @@ class Hangman extends Component {
         ));
     }
 
+    // pode errar um numero maior de letras durante a partida
+    bonus1() {
+        this.setState({
+            maxWrong: 8
+        })
+    }
+
+    // pontuação em dobro em caso de vitória
+    bonus2() {
+        this.setState({
+            scoreToAdd: 200
+        })
+    }
+
+    // tempo maior de partida
+    bonus3() {
+        this.setState(({ seconds }) => ({
+            seconds: seconds + 20
+        }))
+    }
+
+    // revelar letra aleatória
+    bonus4() {
+        let guessedWord = this.guessedWord();
+        let position = Math.floor(Math.random() * guessedWord.length);
+
+        while (guessedWord[position] != "_" || guessedWord[position] == " ") {
+            position = Math.floor(Math.random() * guessedWord.length);
+        }
+        this.handleGuess(this.state.answer.charAt(position))
+    }
+
+    // limpar error
+    bonus5() {
+        this.setState({
+            nWrong: 0
+        })
+    }
+
     /** render: render game */
     state = { redirect: null };
     render() {
-        const gameOver = (this.state.nWrong >= this.props.maxWrong) || this.state.seconds <= 0;
-        const altText = `${this.state.nWrong}/${this.props.maxWrong} palpites`;
+        const gameOver = (this.state.nWrong >= this.state.maxWrong) || this.state.seconds <= 0;
+        const altText = `${this.state.nWrong}/${this.state.maxWrong} palpites`;
         const isWinner = this.guessedWord().join("") === this.state.answer;
         let gameState = this.generateButtons();
         const loading = this.state.loading;
@@ -241,6 +278,21 @@ class Hangman extends Component {
                     {<button className="Hangman-reset" onClick={this.reset}>
                         Recomeçar
                     </button>}
+                    {/* {<button className="Hangman-reset" style={{ left: '5%' }} onClick={() => this.bonus1()}>
+                        Bonus 1
+                    </button>}
+                    {<button className="Hangman-reset" style={{ left: '20%' }} onClick={() => this.bonus2()}>
+                        Bonus 2
+                    </button>}
+                    {<button className="Hangman-reset" style={{ left: '35%' }} onClick={() => this.bonus3()}>
+                        Bonus 3
+                    </button>}
+                    {<button className="Hangman-reset" style={{ left: '50%' }} onClick={() => this.bonus4()}>
+                        Bonus 4
+                    </button>}
+                    {<button className="Hangman-reset" style={{ left: '65%' }} onClick={() => this.bonus5()}>
+                        Bonus 5
+                    </button>} */}
                 </div>
                 <img src={this.props.images[7]} className="plateia" alt="plateia" />
             </section>
