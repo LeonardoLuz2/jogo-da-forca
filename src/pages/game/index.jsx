@@ -12,7 +12,7 @@ import img5 from "./images/img5.png";
 import img6 from "./images/img6.png";
 import img7 from "./images/plateia.png"
 
-const time = 15;
+const time = 60;
 
 class Hangman extends Component {
     /** by default, allow 6 guesses and use provided gallows images. */
