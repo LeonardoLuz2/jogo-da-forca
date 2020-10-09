@@ -20,7 +20,7 @@ export async function getPlayer(id) {
 export async function getRanking() {
   const db = firebase.firestore();
   const players = await db.collection('players');
-  const ranking = await players.orderBy("score", "desc").limit(100).get();
+  const ranking = await players.orderBy("score", "desc").limit(10).get();
 
   return ranking.docs.map(doc => {
     return { id: doc.id, ...doc.data() }
