@@ -278,7 +278,7 @@ class Hangman extends Component {
                     {<button className="Hangman-reset" onClick={this.reset}>
                         Recomeçar
                     </button>}
-                    {/* {<button className="Hangman-reset" style={{ left: '5%' }} onClick={() => this.bonus1()}>
+                    {<button className="Hangman-reset" style={{ left: '5%' }} onClick={() => this.bonus1()}>
                         Bonus 1
                     </button>}
                     {<button className="Hangman-reset" style={{ left: '20%' }} onClick={() => this.bonus2()}>
@@ -292,7 +292,7 @@ class Hangman extends Component {
                     </button>}
                     {<button className="Hangman-reset" style={{ left: '65%' }} onClick={() => this.bonus5()}>
                         Bonus 5
-                    </button>} */}
+                    </button>}
                 </div>
                 <img src={this.props.images[7]} className="plateia" alt="plateia" />
             </section>
