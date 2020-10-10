@@ -48,3 +48,23 @@ export async function addPlayerCredits(playerId, credits) {
     credits: currentCredits + credits
   });
 }
+
+export async function playerHaveCredits(playerId, credits) {
+  const db = firebase.firestore();
+  const player = db.collection('players').doc(playerId);
+
+  const currentCredits = await (await player.get()).data().credits;
+
+  return currentCredits >= credits;
+}
+
+export async function playerPurchasedBonus(playerId, credits) {
+  const db = firebase.firestore();
+  const player = db.collection('players').doc(playerId);
+
+  const currentCredits = await (await player.get()).data().credits;
+
+  player.update({
+    credits: currentCredits - credits
+  });
+}

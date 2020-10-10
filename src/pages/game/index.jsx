@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { getPlayer, addPlayerScore, addPlayerCredits } from "../../actions/player";
+import { getPlayer, addPlayerScore, addPlayerCredits, playerHaveCredits, playerPurchasedBonus } from "../../actions/player";
 import { getWordsByCategory } from "../admin/components/words/actions";
 import "./game.css";
 import { Redirect } from "react-router-dom";
@@ -12,12 +12,15 @@ import img5 from "./images/img5.png";
 import img6 from "./images/img6.png";
 import img7 from "./images/plateia.png"
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const time = 60;
 
 class Hangman extends Component {
     /** by default, allow 6 guesses and use provided gallows images. */
     static defaultProps = {
-        images: [img0, img1, img2, img3, img4, img5, img6, img7]
+        images: [img0, img1, img2, img3, img4, img5, img6, img6, img6, img6, img7]
     };
 
     constructor(props) {
@@ -196,44 +199,121 @@ class Hangman extends Component {
     }
 
     // pode errar um numero maior de letras durante a partida
-    bonus1() {
+    async bonus1() {
+        const price = 100;
+
+        if (!await this.haveCredits(price)) {
+            return;
+        }
+
         this.setState({
             maxWrong: 8
-        })
+        });
+
+        await this.purchasedBonus(price);
     }
 
     // pontuação em dobro em caso de vitória
-    bonus2() {
-        this.setState({
-            scoreToAdd: 200
-        })
+    async bonus2() {
+        const price = 100;
+
+        if (!await this.haveCredits(price)) {
+            return;
+        }
+
+        this.setState(({ scoreToAdd }) => ({
+            scoreToAdd: scoreToAdd * 2
+        }))
+
+        await this.purchasedBonus(price);
     }
 
     // tempo maior de partida
-    bonus3() {
+    async bonus3() {
+        const price = 100;
+
+        if (!await this.haveCredits(price)) {
+            return;
+        }
+
         this.setState(({ seconds }) => ({
             seconds: seconds + 20
-        }))
+        }));
+
+        await this.purchasedBonus(price);
     }
 
     // revelar letra aleatória
-    bonus4() {
+    async bonus4() {
+        const price = 100;
+
+        if (!await this.haveCredits(price)) {
+            return;
+        }
+
         let guessedWord = this.guessedWord();
         let position = Math.floor(Math.random() * guessedWord.length);
 
-        while (guessedWord[position] != "_" || guessedWord[position] == " ") {
+        let attempts = 1;
+        while ((guessedWord[position] != "_" || guessedWord[position] == " ") && attempts < 20) {
+            attempts++;
             position = Math.floor(Math.random() * guessedWord.length);
         }
-        this.handleGuess(this.state.answer.charAt(position))
+        this.handleGuess(this.state.answer.charAt(position));
+
+        await this.purchasedBonus(price);
     }
 
     // limpar error
-    bonus5() {
+    async bonus5() {
+        const price = 100;
+
+        if (!await this.haveCredits(price)) {
+            return;
+        }
+
         this.setState({
             nWrong: 0
-        })
+        });
+
+        await this.purchasedBonus(price);
     }
 
+    async haveCredits(credits) {
+        const result = await playerHaveCredits(localStorage.getItem('player'), credits);
+
+        if (!result) {
+            toast.error(`Você não possui créditos suficientes (${credits})!`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+        }
+
+        return result;
+    }
+
+    async purchasedBonus(credits) {
+        await playerPurchasedBonus(localStorage.getItem('player'), credits);
+
+        toast.success(`Compra de bonus realizada!`, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+
+        setTimeout(async () => {
+            await this.loadPlayerInfo();
+        }, 500);
+    }
     /** render: render game */
     state = { redirect: null };
     render() {
@@ -259,7 +339,7 @@ class Hangman extends Component {
                     </button>}
                 <div className="Hangman">
                     <img src={this.props.images[this.state.nWrong]} alt={altText} />
-                    <p className="Hangman-wrong">Erros: {this.state.nWrong}</p>
+                    <p className="Hangman-wrong">Erros: {this.state.nWrong}/{this.state.maxWrong}</p>
                     <p className="Hangman-timer">Tempo: {this.state.seconds}</p>
                     <p className="Player-score">Pontos: {this.state.playerScore}</p>
                     <p className="Player-credits">Créditos: {this.state.playerCredits}</p>
@@ -276,7 +356,7 @@ class Hangman extends Component {
                         <p className="Hangman-btns">{gameState}</p>
                     }
                     {<button className="Hangman-reset" onClick={this.reset}>
-                        Recomeçar
+                        Play again
                     </button>}
                     {<button className="Hangman-reset" style={{ left: '5%' }} onClick={() => this.bonus1()}>
                         Bonus 1
@@ -294,7 +374,8 @@ class Hangman extends Component {
                         Bonus 5
                     </button>}
                 </div>
-                <img src={this.props.images[7]} className="plateia" alt="plateia" />
+                <img src={this.props.images[10]} className="plateia" alt="plateia" />
+                <ToastContainer />
             </section>
         );
     }
