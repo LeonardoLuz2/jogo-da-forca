@@ -25,7 +25,22 @@ class Hangman extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { nWrong: 0, maxWrong: 6, seconds: time, guessed: new Set(), answer: "", loading: true, playerScore: 0, playerCredits: 0, scoreToAdd: 100 };
+        this.state = {
+            nWrong: 0,
+            maxWrong: 6,
+            seconds: time,
+            guessed: new Set(),
+            answer: "",
+            loading: true,
+            playerScore: 0,
+            playerCredits: 0,
+            scoreToAdd: 100,
+            bonus1purchased: false,
+            bonus2purchased: false,
+            bonus3purchased: false,
+            bonus4purchased: false,
+            bonus5purchased: false,
+        };
         this.handleGuess = this.handleGuess.bind(this);
         this.reset = this.reset.bind(this);
     }
@@ -95,6 +110,11 @@ class Hangman extends Component {
             answer: word.toLowerCase(),
             loading: false,
             scoreToAdd: 100,
+            bonus1purchased: false,
+            bonus2purchased: false,
+            bonus3purchased: false,
+            bonus4purchased: false,
+            bonus5purchased: false,
         });
         this.timer();
     }
@@ -207,6 +227,7 @@ class Hangman extends Component {
         }
 
         this.setState({
+            bonus1purchased: true,
             maxWrong: 8
         });
 
@@ -222,6 +243,7 @@ class Hangman extends Component {
         }
 
         this.setState(({ scoreToAdd }) => ({
+            bonus2purchased: true,
             scoreToAdd: scoreToAdd * 2
         }))
 
@@ -237,6 +259,7 @@ class Hangman extends Component {
         }
 
         this.setState(({ seconds }) => ({
+            bonus3purchased: true,
             seconds: seconds + 20
         }));
 
@@ -259,6 +282,11 @@ class Hangman extends Component {
             attempts++;
             position = Math.floor(Math.random() * guessedWord.length);
         }
+
+        this.setState({
+            bonus4purchased: true
+        })
+
         this.handleGuess(this.state.answer.charAt(position));
 
         await this.purchasedBonus(price);
@@ -273,6 +301,7 @@ class Hangman extends Component {
         }
 
         this.setState({
+            bonus5purchased: true,
             nWrong: 0
         });
 
@@ -358,21 +387,43 @@ class Hangman extends Component {
                     {<button className="Hangman-reset" onClick={this.reset}>
                         Play again
                     </button>}
-                    {<button className="Hangman-reset" style={{ left: '5%' }} onClick={() => this.bonus1()}>
-                        Bonus 1
-                    </button>}
-                    {<button className="Hangman-reset" style={{ left: '20%' }} onClick={() => this.bonus2()}>
-                        Bonus 2
-                    </button>}
-                    {<button className="Hangman-reset" style={{ left: '35%' }} onClick={() => this.bonus3()}>
-                        Bonus 3
-                    </button>}
-                    {<button className="Hangman-reset" style={{ left: '50%' }} onClick={() => this.bonus4()}>
-                        Bonus 4
-                    </button>}
-                    {<button className="Hangman-reset" style={{ left: '65%' }} onClick={() => this.bonus5()}>
-                        Bonus 5
-                    </button>}
+
+                    {
+                        (!gameOver && !isWinner) &&
+                        <>
+                            {
+                                !this.state.bonus1purchased &&
+                                <button className="Hangman-reset" style={{ left: '5%' }} onClick={() => this.bonus1()}>
+                                    Bonus 1
+                        </button>
+                            }
+                            {
+                                !this.state.bonus2purchased &&
+                                <button className="Hangman-reset" style={{ left: '20%' }} onClick={() => this.bonus2()}>
+                                    Bonus 2
+                        </button>
+                            }
+                            {
+                                !this.state.bonus3purchased &&
+                                <button className="Hangman-reset" style={{ left: '35%' }} onClick={() => this.bonus3()}>
+                                    Bonus 3
+                        </button>
+                            }
+                            {
+                                !this.state.bonus4purchased &&
+                                <button className="Hangman-reset" style={{ left: '50%' }} onClick={() => this.bonus4()}>
+                                    Bonus 4
+                        </button>
+                            }
+                            {
+                                !this.state.bonus5purchased &&
+                                <button className="Hangman-reset" style={{ left: '65%' }} onClick={() => this.bonus5()}>
+                                    Bonus 5
+                        </button>
+                            }
+                        </>
+                    }
+
                 </div>
                 <img src={this.props.images[10]} className="plateia" alt="plateia" />
                 <ToastContainer />
