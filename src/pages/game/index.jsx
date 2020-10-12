@@ -366,6 +366,9 @@ class Hangman extends Component {
                 {<button className="game-back" onClick={() => this.setState({ redirect: "/" })}>
                     Voltar
                     </button>}
+                {<button className="game-back" style={{ top:'6%' }} onClick={() => this.setState({ redirect: "/ranking" })}>
+                    Ranking
+                    </button>}
                 <div className="Hangman">
                     <img src={this.props.images[this.state.nWrong]} alt={altText} />
                     <p className="Hangman-wrong">Erros: {this.state.nWrong}/{this.state.maxWrong}</p>

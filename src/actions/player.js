@@ -68,3 +68,14 @@ export async function playerPurchasedBonus(playerId, credits) {
     credits: currentCredits - credits
   });
 }
+
+export async function clearRanking() {
+  const db = firebase.firestore();
+  db.collection('players').get().then(function (querySnapshot) {
+    querySnapshot.forEach(function (doc) {
+      doc.ref.update({
+        score: 0
+      });
+    });
+  });
+}
