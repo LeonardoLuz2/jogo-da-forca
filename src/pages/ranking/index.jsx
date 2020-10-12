@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { Row, Table } from 'react-bootstrap';
+import { Button, Row, Table } from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
 import { getRanking } from '../../actions/player';
 
 export default function Ranking() {
 
+  const history = useHistory();
   const [ranking, setRanking] = useState([]);
 
   useEffect(() => {
@@ -39,6 +41,9 @@ export default function Ranking() {
           </tbody>
         </Table>
       </Row>
+      <Button className="mt-2" onClick={() => history.goBack()}>
+            Voltar
+      </Button>
     </>
   )
 }
