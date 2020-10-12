@@ -40,6 +40,7 @@ class Hangman extends Component {
             bonus3purchased: false,
             bonus4purchased: false,
             bonus5purchased: false,
+            purchasing: false
         };
         this.handleGuess = this.handleGuess.bind(this);
         this.reset = this.reset.bind(this);
@@ -115,6 +116,7 @@ class Hangman extends Component {
             bonus3purchased: false,
             bonus4purchased: false,
             bonus5purchased: false,
+            purchasing: false
         });
         this.timer();
     }
@@ -218,11 +220,19 @@ class Hangman extends Component {
         ));
     }
 
+    setPurchasing(purchasing) {
+        this.setState({
+            purchasing : purchasing
+        })
+    }
+
     // pode errar um numero maior de letras durante a partida
     async bonus1() {
         const price = 100;
+        this.setPurchasing(true);
 
         if (!await this.haveCredits(price)) {
+            this.setPurchasing(false);
             return;
         }
 
@@ -237,8 +247,9 @@ class Hangman extends Component {
     // pontuação em dobro em caso de vitória
     async bonus2() {
         const price = 100;
-
+        this.setPurchasing(true);
         if (!await this.haveCredits(price)) {
+            this.setPurchasing(false);
             return;
         }
 
@@ -253,8 +264,9 @@ class Hangman extends Component {
     // tempo maior de partida
     async bonus3() {
         const price = 100;
-
+        this.setPurchasing(true);
         if (!await this.haveCredits(price)) {
+            this.setPurchasing(false);
             return;
         }
 
@@ -269,8 +281,9 @@ class Hangman extends Component {
     // revelar letra aleatória
     async bonus4() {
         const price = 100;
-
+        this.setPurchasing(true);
         if (!await this.haveCredits(price)) {
+            this.setPurchasing(false);
             return;
         }
 
@@ -295,8 +308,9 @@ class Hangman extends Component {
     // limpar error
     async bonus5() {
         const price = 100;
-
+        this.setPurchasing(true);
         if (!await this.haveCredits(price)) {
+            this.setPurchasing(false);
             return;
         }
 
@@ -338,10 +352,11 @@ class Hangman extends Component {
             draggable: true,
             progress: undefined,
         });
-
+        
         setTimeout(async () => {
             await this.loadPlayerInfo();
-        }, 500);
+            this.setPurchasing(false);
+        }, 100);
     }
     /** render: render game */
     state = { redirect: null };
@@ -366,7 +381,7 @@ class Hangman extends Component {
                 {<button className="game-back" onClick={() => this.setState({ redirect: "/" })}>
                     Voltar
                     </button>}
-                {<button className="game-back" style={{ top:'6%' }} onClick={() => this.setState({ redirect: "/ranking" })}>
+                {<button className="game-back" style={{ top: '6%' }} onClick={() => this.setState({ redirect: "/ranking" })}>
                     Ranking
                     </button>}
                 <div className="Hangman">
@@ -396,33 +411,28 @@ class Hangman extends Component {
                         <>
                             {
                                 !this.state.bonus1purchased &&
-                                <button className="Hangman-reset" style={{ left: '5%' }} onClick={() => this.bonus1()}>
-                                    Bonus 1
-                        </button>
+                                <button disabled={this.state.purchasing} className="Hangman-reset" style={{ left: '5%' }} onClick={() => this.bonus1()}>
+                                    Bonus 1</button>
                             }
                             {
                                 !this.state.bonus2purchased &&
-                                <button className="Hangman-reset" style={{ left: '20%' }} onClick={() => this.bonus2()}>
-                                    Bonus 2
-                        </button>
+                                <button disabled={this.state.purchasing} className="Hangman-reset" style={{ left: '20%' }} onClick={() => this.bonus2()}>
+                                    Bonus 2</button>
                             }
                             {
                                 !this.state.bonus3purchased &&
-                                <button className="Hangman-reset" style={{ left: '35%' }} onClick={() => this.bonus3()}>
-                                    Bonus 3
-                        </button>
+                                <button disabled={this.state.purchasing} className="Hangman-reset" style={{ left: '35%' }} onClick={() => this.bonus3()}>
+                                    Bonus 3</button>
                             }
                             {
                                 !this.state.bonus4purchased &&
-                                <button className="Hangman-reset" style={{ left: '50%' }} onClick={() => this.bonus4()}>
-                                    Bonus 4
-                        </button>
+                                <button disabled={this.state.purchasing} className="Hangman-reset" style={{ left: '50%' }} onClick={() => this.bonus4()}>
+                                    Bonus 4</button>
                             }
                             {
                                 !this.state.bonus5purchased &&
-                                <button className="Hangman-reset" style={{ left: '65%' }} onClick={() => this.bonus5()}>
-                                    Bonus 5
-                        </button>
+                                <button disabled={this.state.purchasing} className="Hangman-reset" style={{ left: '65%' }} onClick={() => this.bonus5()}>
+                                    Bonus 5</button>
                             }
                         </>
                     }
