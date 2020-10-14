@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { getPlayer, addPlayerScore, addPlayerCredits, playerHaveCredits, playerPurchasedBonus } from "../../actions/player";
 import { getWordsByCategory } from "../admin/components/words/actions";
+import ReactTooltip from 'react-tooltip';
 import "./game.css";
 import { Redirect } from "react-router-dom";
 import img0 from "./images/img0.png";
@@ -11,6 +12,8 @@ import img4 from "./images/img4.png";
 import img5 from "./images/img5.png";
 import img6 from "./images/img6.png";
 import img7 from "./images/plateia.png"
+import img8 from "./images/moldura.jpg"
+import img9 from "./images/madeira.png"
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -20,7 +23,7 @@ const time = 60;
 class Hangman extends Component {
     /** by default, allow 6 guesses and use provided gallows images. */
     static defaultProps = {
-        images: [img0, img1, img2, img3, img4, img5, img6, img6, img6, img6, img7]
+        images: [img0, img1, img2, img3, img4, img5, img6, img6, img6, img6, img7, img8, img9]
     };
 
     constructor(props) {
@@ -222,7 +225,7 @@ class Hangman extends Component {
 
     setPurchasing(purchasing) {
         this.setState({
-            purchasing : purchasing
+            purchasing: purchasing
         })
     }
 
@@ -352,7 +355,7 @@ class Hangman extends Component {
             draggable: true,
             progress: undefined,
         });
-        
+
         setTimeout(async () => {
             await this.loadPlayerInfo();
             this.setPurchasing(false);
@@ -378,18 +381,18 @@ class Hangman extends Component {
             }
         return (
             <section className="game">
-                {<button className="game-back" onClick={() => this.setState({ redirect: "/" })}>
+                {<button className="game-button back" onClick={() => this.setState({ redirect: "/" })}>
                     Voltar
                     </button>}
-                {<button className="game-back" style={{ top: '6%' }} onClick={() => this.setState({ redirect: "/ranking" })}>
+                {<button className="game-button ranking" onClick={() => this.setState({ redirect: "/ranking" })}>
                     Ranking
                     </button>}
                 <div className="Hangman">
                     <img src={this.props.images[this.state.nWrong]} alt={altText} />
-                    <p className="Hangman-wrong">Erros: {this.state.nWrong}/{this.state.maxWrong}</p>
-                    <p className="Hangman-timer">Tempo: {this.state.seconds}</p>
-                    <p className="Player-score">Pontos: {this.state.playerScore}</p>
-                    <p className="Player-credits">Créditos: {this.state.playerCredits}</p>
+                    <p className="game-text wrongs">Erros: {this.state.nWrong}/{this.state.maxWrong}</p>
+                    <p className="game-text timer">Tempo: {this.state.seconds}</p>
+                    <p className="game-text score">Pontos: {this.state.playerScore}</p>
+                    <p className="game-text credits">Créditos: {this.state.playerCredits}</p>
                     <p className="Hangman-word">
                         {
                             this.state.loading ?
@@ -402,8 +405,8 @@ class Hangman extends Component {
                         !this.state.loading &&
                         <p className="Hangman-btns">{gameState}</p>
                     }
-                    {<button className="Hangman-reset" onClick={this.reset}>
-                        Play again
+                    {<button className="game-button play-again" onClick={this.reset}>
+                        Jogar Novamente
                     </button>}
 
                     {
@@ -411,35 +414,41 @@ class Hangman extends Component {
                         <>
                             {
                                 !this.state.bonus1purchased &&
-                                <button disabled={this.state.purchasing} className="Hangman-reset" style={{ left: '5%' }} onClick={() => this.bonus1()}>
-                                    Bonus 1</button>
+                                <button disabled={this.state.purchasing} className="store-button bonus-1" onClick={() => this.bonus1()}>
+                                    <span data-tip="hello world" > Bônus 1</span></button>
                             }
                             {
                                 !this.state.bonus2purchased &&
-                                <button disabled={this.state.purchasing} className="Hangman-reset" style={{ left: '20%' }} onClick={() => this.bonus2()}>
-                                    Bonus 2</button>
+                                <button disabled={this.state.purchasing} className="store-button bonus-2" onClick={() => this.bonus2()}>
+                                   <span data-place="left" data-type="dark" data-tip="hello world" > Bônus 2</span></button>
                             }
                             {
                                 !this.state.bonus3purchased &&
-                                <button disabled={this.state.purchasing} className="Hangman-reset" style={{ left: '35%' }} onClick={() => this.bonus3()}>
-                                    Bonus 3</button>
+                                <button disabled={this.state.purchasing} className="store-button bonus-3" onClick={() => this.bonus3()}>
+                                    Bônus 3</button>
                             }
                             {
                                 !this.state.bonus4purchased &&
-                                <button disabled={this.state.purchasing} className="Hangman-reset" style={{ left: '50%' }} onClick={() => this.bonus4()}>
-                                    Bonus 4</button>
+                                <button disabled={this.state.purchasing} className="store-button bonus-4" onClick={() => this.bonus4()}>
+                                    Bônus 4</button>
                             }
                             {
                                 !this.state.bonus5purchased &&
-                                <button disabled={this.state.purchasing} className="Hangman-reset" style={{ left: '65%' }} onClick={() => this.bonus5()}>
-                                    Bonus 5</button>
+                                <button disabled={this.state.purchasing} className="store-button bonus-5" onClick={() => this.bonus5()}>
+                                    Bônus 5</button>
                             }
                         </>
                     }
 
                 </div>
                 <img src={this.props.images[10]} className="plateia" alt="plateia" />
+                <img src={this.props.images[11]} className="moldura" alt="moldura" />
+                <img src={this.props.images[12]} className="madeira-1" alt="madeira" />
+                <img src={this.props.images[12]} className="madeira-2" alt="madeira" />
+                <p className="store-text store">Loja de Bônus</p>
+                <p className="store-text credits-price">100$ Créditos</p>
                 <ToastContainer />
+                <ReactTooltip />
             </section>
         );
     }
