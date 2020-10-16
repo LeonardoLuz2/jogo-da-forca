@@ -17,8 +17,25 @@ import img9 from "./images/madeira.png"
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const time = 60;
+
+const renderTooltip1 = props => (
+    <Tooltip {...props}>Pode errar um numero maior de letras</Tooltip>
+);
+const renderTooltip2 = props => (
+    <Tooltip {...props}>Pontuação em dobro em caso de vitória</Tooltip>
+);
+const renderTooltip3 = props => (
+    <Tooltip {...props}>Tempo maior de partida</Tooltip>
+);
+const renderTooltip4 = props => (
+    <Tooltip {...props}>Revelar letra aleatória</Tooltip>
+);
+const renderTooltip5 = props => (
+    <Tooltip {...props}>Limpar erros</Tooltip>
+);
 
 class Hangman extends Component {
     /** by default, allow 6 guesses and use provided gallows images. */
@@ -409,33 +426,45 @@ class Hangman extends Component {
                         Jogar Novamente
                     </button>}
 
+
                     {
                         (!gameOver && !isWinner) &&
                         <>
                             {
                                 !this.state.bonus1purchased &&
-                                <button disabled={this.state.purchasing} className="store-button bonus-1" onClick={() => this.bonus1()}>
-                                    <span data-tip="hello world" > Bônus 1</span></button>
+                                <OverlayTrigger placement="right" overlay={renderTooltip1}>
+                                    <button disabled={this.state.purchasing} className="store-button bonus-1" onClick={() => this.bonus1()}>
+                                        Bônus 1</button>
+                                </OverlayTrigger>
+
                             }
                             {
                                 !this.state.bonus2purchased &&
-                                <button disabled={this.state.purchasing} className="store-button bonus-2" onClick={() => this.bonus2()}>
-                                   <span data-place="left" data-type="dark" data-tip="hello world" > Bônus 2</span></button>
+                                <OverlayTrigger placement="right" overlay={renderTooltip2}>
+                                    <button disabled={this.state.purchasing} className="store-button bonus-2" onClick={() => this.bonus2()}>
+                                        <span data-place="left" data-type="dark" data-tip="hello world" > Bônus 2</span></button>
+                                </OverlayTrigger>
                             }
                             {
                                 !this.state.bonus3purchased &&
-                                <button disabled={this.state.purchasing} className="store-button bonus-3" onClick={() => this.bonus3()}>
-                                    Bônus 3</button>
+                                <OverlayTrigger placement="right" overlay={renderTooltip3}>
+                                    <button disabled={this.state.purchasing} className="store-button bonus-3" onClick={() => this.bonus3()}>
+                                        Bônus 3</button>
+                                </OverlayTrigger>
                             }
                             {
                                 !this.state.bonus4purchased &&
-                                <button disabled={this.state.purchasing} className="store-button bonus-4" onClick={() => this.bonus4()}>
-                                    Bônus 4</button>
+                                <OverlayTrigger placement="right" overlay={renderTooltip4}>
+                                    <button disabled={this.state.purchasing} className="store-button bonus-4" onClick={() => this.bonus4()}>
+                                        Bônus 4</button>
+                                </OverlayTrigger>
                             }
                             {
                                 !this.state.bonus5purchased &&
-                                <button disabled={this.state.purchasing} className="store-button bonus-5" onClick={() => this.bonus5()}>
-                                    Bônus 5</button>
+                                <OverlayTrigger placement="right" overlay={renderTooltip5}>
+                                    <button disabled={this.state.purchasing} className="store-button bonus-5" onClick={() => this.bonus5()}>
+                                        Bônus 5</button>
+                                </OverlayTrigger>
                             }
                         </>
                     }
@@ -448,7 +477,7 @@ class Hangman extends Component {
                 <p className="store-text store">Loja de Bônus</p>
                 <p className="store-text credits-price">100$ Créditos</p>
                 <ToastContainer />
-                <ReactTooltip />
+                {/* <ReactTooltip /> */}
             </section>
         );
     }
