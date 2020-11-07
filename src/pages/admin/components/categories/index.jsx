@@ -40,7 +40,7 @@ export default function Categories() {
   async function remove(id) {
     let hasRemovedCategory = await removeCategory(id, loadCategories)
     if (!hasRemovedCategory) {
-      setAlert('Não foi possivel remover a categoria pois ela esta vinculada a uma palavra')
+      setAlert('Não foi possível remover a categoria pois ela está vinculada a uma palavra')
     }
   }
 

@@ -363,7 +363,7 @@ class Hangman extends Component {
     async purchasedBonus(credits) {
         await playerPurchasedBonus(localStorage.getItem('player'), credits);
 
-        toast.success(`Compra de bonus realizada!`, {
+        toast.success(`Compra de bônus realizada!`, {
             position: "top-right",
             autoClose: 5000,
             hideProgressBar: false,
